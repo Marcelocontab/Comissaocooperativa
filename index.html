@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador de Receita das Cooperativas — Plano MI 2027</title>
+<style>
+:root{--esc:#003641;--tur:#00AE9D;--vcl:#C9D200;--vmd:#7DB61C;--bg:#f4f7f7;--card:#fff;--txt:#1d2b2f;--mut:#5f6f73;--ln:#dde5e6;--neg:#b3261e}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--txt);font-size:14px}
+header{background:var(--esc);color:#fff;padding:22px 28px}
+header h1{margin:0;font-size:20px}
+header p{margin:6px 0 0;color:#b9d3d6;font-size:13px}
+main{max-width:1280px;margin:0 auto;padding:20px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(360px,1fr))}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+@media(max-width:860px){.g2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:18px}
+.card h2{margin:0 0 4px;font-size:15px;color:var(--esc)}
+.card .sub{margin:0 0 14px;color:var(--mut);font-size:12.5px;line-height:1.45}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:#e3f6f4;color:#00756a;margin-right:6px;font-weight:600}
+.tag.r{background:#f2f6d6;color:#5d6400}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:4px}
+.f{margin-bottom:12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+input,select{width:100%;padding:8px 10px;border:1px solid #c6d2d4;border-radius:7px;font-size:14px;font-variant-numeric:tabular-nums;background:#fff}
+input:focus,select:focus{outline:2px solid var(--tur);border-color:var(--tur)}
+.hint{font-size:11.5px;color:var(--mut);margin-top:3px}
+.goal{background:#f6faf9;border:1px dashed #b5d9d5;border-radius:8px;padding:12px;margin-top:6px}
+.goal b{color:var(--esc)}
+.kpi{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:14px 16px;border-top:4px solid var(--tur)}
+.kpi.r{border-top-color:var(--vcl)}.kpi.t{border-top-color:var(--esc)}
+.kpi .l{font-size:12px;color:var(--mut)}
+.kpi .v{font-size:19px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12px;margin-top:4px;font-variant-numeric:tabular-nums}
+.pos{color:#00756a}.neg{color:var(--neg)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:12.5px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--ln);text-align:right;white-space:nowrap}
+th{background:#eef3f3;color:var(--esc);font-weight:600;position:sticky;top:0}
+td:first-child,th:first-child{text-align:left}
+tfoot td{font-weight:700;background:#f6faf9;border-top:2px solid var(--esc)}
+.scroll{overflow-x:auto}
+.bar{display:flex;height:22px;border-radius:5px;overflow:hidden;margin:6px 0}
+.bar div{height:100%}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--mut)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px;background:var(--c)}
+button{background:var(--esc);color:#fff;border:0;border-radius:7px;padding:8px 14px;font-size:13px;cursor:pointer}
+button.sec{background:#fff;color:var(--esc);border:1px solid var(--esc)}
+#resumo p{margin:0 0 8px}
+.notes li{margin-bottom:6px;line-height:1.45}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;background:var(--soft);padding:2px 5px;border-radius:4px}
+:root{--soft:#eef3f3;--goalbg:#f6faf9;--goalln:#b5d9d5;--inp:#fff;--inpln:#c6d2d4;--th:#eef3f3;--h2:#003641;--hdr:#003641}
+[data-theme=dark]{--bg:#0f1a1d;--card:#16252a;--txt:#e3ecee;--mut:#9fb2b6;--ln:#26383e;--soft:#1e3036;--goalbg:#132a2c;--goalln:#1f5a55;--inp:#0f1d21;--inpln:#33494f;--th:#1c2f35;--h2:#7fe0d5;--hdr:#071114;--neg:#ff8a80}
+[data-theme=dark] .pos{color:#4fd8c8}
+[data-theme=dark] button.sec{background:transparent;color:#7fe0d5;border-color:#7fe0d5}
+[data-theme=dark] button{background:#00AE9D;color:#062126}
+header{background:var(--hdr);display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.card h2{color:var(--h2)}
+th{background:var(--th);color:var(--h2)}
+tfoot td{background:var(--goalbg);border-top-color:var(--h2)}
+input,select{background:var(--inp);border-color:var(--inpln);color:var(--txt)}
+.goal{background:var(--goalbg);border-color:var(--goalln)}
+.goal b{color:var(--h2)}
+.goal a{color:var(--tur)}
+#theme{background:transparent;border:1px solid #7fbcc2;color:#fff;white-space:nowrap}
+</style>
+</head>
+<body>
+<header>
+  <div>
+  <h1>Simulador de Receita das Cooperativas — Plano Multi-Instituído (MI) · Orçamento 2027</h1>
+  <p>Fonte: Orçamento_Investimento_e_Previdencial_2027_15.xlsx — abas "Investimento MI" (linha 44), "Índices" (tabela Indexador) e "Projeção MI" (linhas 7 e 24). Valores padrão reproduzem a planilha, com comissão de risco de 30%.</p>
+  </div>
+  <button id="theme" onclick="toggleTheme()">◐ Modo escuro</button>
+</header>
+<main class="grid">
+
+<section class="grid kpis" id="kpis"></section>
+
+<section class="card" id="resumoCard">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+    <h2>Resumo da simulação</h2>
+    <div><button class="sec" onclick="copyResumo()">Copiar resumo</button> <span id="cpr" class="hint"></span></div>
+  </div>
+  <div id="resumo" style="line-height:1.6;margin-top:8px"></div>
+</section>
+
+<section class="grid g2">
+  <div class="card">
+    <h2>Receita/Comissão Cooperativa — taxa sobre o saldo de investimentos</h2>
+    <p class="sub">Na planilha, linha "Custeio Cooperativa" (célula I44): <span class="mono">Receita/Comissão = Saldo de Investimentos do mês anterior × [(1 + taxa a.a.)^(DU/252) − 1]</span>. Taxa padrão 0,124% a.a. (coluna "Custeio Cooperativa" da tabela Indexador), base 252 dias úteis.</p>
+    <div class="row">
+      <div class="f"><label>Taxa Receita/Comissão Cooperativa (% a.a.)</label><input id="tc" data-kind="pct" value="0,124"></div>
+      <div class="f"><label>Saldo de investimentos inicial — 31/12/2026 (R$)</label><input id="s0" data-kind="brl" value="3.646.501.304,05"><div class="hint">Planilha: "Investimento MI"!L4.</div></div>
+    </div>
+    <div class="goal">
+      <label>Alternativa: atingir uma receita desejada mudando a taxa (R$ no ano)</label>
+      <div class="row"><input id="gc" data-kind="brl" value="6.000.000,00"><button onclick="goalCusteio()">Calcular taxa necessária</button></div>
+      <div id="gcOut" class="hint" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Crescimento do patrimônio — mesma taxa, mais base</h2>
+    <p class="sub">Mantém a taxa e aumenta o patrimônio sobre o qual ela incide. Cada R$ 100.000.000,00 a mais de patrimônio médio rende cerca de <b id="sens">R$ 124.000,00</b> por ano de Receita/Comissão Cooperativa.</p>
+    <div class="f"><label>Receita/Comissão Cooperativa desejada em 2027 (R$)</label><input id="rd" data-kind="brl" value="4.861.149,13"><div class="hint">Mantida a taxa atual, o simulador calcula o recurso líquido adicional (além do fluxo previsto na planilha, em 12 parcelas mensais iguais) necessário para atingir esse valor.</div></div>
+    <div class="goal" id="rlOut"></div>
+  </div>
+
+  <div class="card">
+    <h2>Contribuições de Riscos Terceirizados — comissão das cooperativas</h2>
+    <p class="sub">Base: Jan/2027 = R$ 1.765.640,67 para 16.000 vidas → ticket médio de R$ 110,35 por vida/mês. Comissão da cooperativa = 30% da contribuição de risco.</p>
+    <div class="row">
+      <div class="f"><label>Vidas na base (jan/2027)</label><input id="vb" data-kind="int" value="16.000"></div>
+      <div class="f"><label>Ticket médio da contribuição de risco (R$/vida/mês)</label><input id="tk" data-kind="brl" value="110,35"></div>
+    </div>
+    <div class="row">
+      <div class="f"><label>Novas vidas por mês (a partir de fev)</label><input id="ne" data-kind="int" value="0"></div>
+      <div class="f"><label>Crescimento da carteira (% ao mês)</label><input id="gv" data-kind="pct" value="0,00"><div class="hint">Crescimento orgânico sobre as vidas do mês anterior.</div></div>
+    </div>
+    <div class="f"><label>Cancelamentos (% a.m. sobre a base)</label><input id="ch" data-kind="pct" value="0,00"></div>
+    <div class="row">
+      <div class="f"><label>% de comissão da cooperativa</label><input id="pc" data-kind="pct" value="30,00"></div>
+      <div class="f"><label>Reajuste do ticket (%) · mês de aplicação</label>
+        <div class="row"><input id="rj" data-kind="pct" value="0,00"><select id="rm"></select></div></div>
+    </div>
+    <div class="goal">
+      <label>Valor desejado — Comissão das cooperativas no ano (R$)</label>
+      <div class="row"><input id="gr" data-kind="brl" value="10.000.000,00"><button onclick="goalRisco()">Calcular vidas necessárias</button></div>
+      <div id="grOut" class="hint" style="margin-top:8px"></div>
+      <label style="margin-top:12px">Vidas desejadas em dez/2027</label>
+      <div class="row"><input id="gvd" data-kind="int" value="20.000"><button onclick="goalVidas()">Calcular ritmo necessário</button></div>
+      <div id="gvOut" class="hint" style="margin-top:8px"></div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Composição da receita das cooperativas em 2027</h2>
+  <div class="bar" id="bar"></div>
+  <div class="legend"><span style="--c:var(--tur)" id="lg1"></span><span style="--c:var(--vcl)" id="lg2"></span></div>
+</section>
+
+<section class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+    <h2>Projeção mensal 2027</h2>
+    <div><button class="sec" onclick="resetAll()">Restaurar premissas da planilha</button> <button onclick="copyTable()">Copiar tabela</button> <span id="cp" class="hint"></span></div>
+  </div>
+  <div class="scroll" style="margin-top:10px"><table id="tb"></table></div>
+</section>
+
+<section class="card">
+  <h2>Leitura da regra e pontos de atenção</h2>
+  <ul class="notes" id="notes">
+    <li><b>Natureza da taxa.</b> A Receita/Comissão Cooperativa (linha "Custeio Cooperativa" na planilha) é uma taxa de administração sobre o patrimônio de investimentos (0,124% a.a.), capitalizada por dias úteis (DU/252) e debitada na conta 5.04.01.01 (Cobertura/Reversão de Despesas Administrativas).</li>
+    <li><b>Saldo projetado.</b> Para manter o saldo aderente à planilha, o cálculo do saldo continua descontando o custeio da Fundação (0,07% a.a., linha 45), que fica fixo e fora da visão deste simulador.</li>
+    <li><b>Base de cálculo.</b> Incide sobre o saldo total de investimentos do mês anterior (linha 4), diferente da Taxa DTVM, que exclui as linhas 15 e 17 (fundos). A receita cresce junto com o patrimônio: rentabilidade e fluxo previdencial mexem no custeio de forma indireta.</li>
+    <li><b>Riscos não passam pelo saldo do MI.</b> A conta 3.01.01.07.01.01 (contribuição de risco) e a 3.02.06.01 (repasse de prêmio) se anulam na "Projeção MI" (AD24 = −AD7). O Bloco 2 mexe na receita das cooperativas, não no patrimônio do plano.</li>
+    <li><b>Premissa de crescimento a revisar.</b> Em "Projeção MI", AD7 = N7 + Z7 × AA7, com 266 entradas e ticket médio <b>R$ 1,00</b> (AA7). Assim, a linha cresce só R$ 266,00/mês. Com o ticket real de R$ 110,35, as mesmas 266 vidas somariam cerca de R$ 29.353,78 por mês. O AA7 parece ser um valor provisório.</li>
+    <li><b>Fórmulas com #REF! latente.</b> O ramo de projeção da coluna H (ex.: H6, H7, H10, H39–H45) aponta para #REF!. Hoje não aparece porque H3 ≤ D1 (o histórico prevalece), mas o erro volta se a data-base mudar.</li>
+    <li><b>"Valor Referência" (coluna D, linhas 39–45).</b> O SUMIFS usa a coluna A (vazia) como conta, e não a B. Por isso D39:D42 e D44:D45 repetem o total agregado e o valor de referência por rubrica não fica confiável.</li>
+  </ul>
+</section>
+</main>
+
+<script>
+const D=[{"m": "2027-01", "du": 20, "r": 0.010518161871285465, "o": -5.1242334685855115e-05, "f": 9788483.45, "cp": 358657.36, "pv": 202518.16, "S": 3693896247.71}, {"m": "2027-02", "du": 18, "r": 0.01009557923625455, "o": -4.716900608603577e-05, "f": 10391779.73, "cp": 326985.46, "pv": 184634.81, "S": 3740894192.01}, {"m": "2027-03", "du": 22, "r": 0.01137649029819191, "o": -5.5497188044634755e-05, "f": 10995076.01, "cp": 404737.66, "pv": 228537.2, "S": 3793606630.53}, {"m": "2027-04", "du": 21, "r": 0.010960509600244575, "o": -5.348384250175582e-05, "f": 11598372.28, "cp": 391783.4, "pv": 221222.75, "S": 3845968961.88}, {"m": "2027-05", "du": 20, "r": 0.01058988054440971, "o": -5.146813000697761e-05, "f": 12201668.56, "cp": 378276.31, "pv": 213596.13, "S": 3898109165.05}, {"m": "2027-06", "du": 22, "r": 0.011235817863814791, "o": -5.567266004422901e-05, "f": 12804964.84, "cp": 421747.18, "pv": 238141.72, "S": 3953835667.47}, {"m": "2027-07", "du": 22, "r": 0.011188385558097536, "o": -5.572492804278633e-05, "f": 13408261.11, "cp": 427776.39, "pv": 241546.14, "S": 4010591316.72}, {"m": "2027-08", "du": 22, "r": 0.010880033838518922, "o": -5.577852666437831e-05, "f": 14011557.39, "cp": 433916.94, "pv": 245013.43, "S": 4067335608.1}, {"m": "2027-09", "du": 21, "r": 0.010783262092054576, "o": -5.374569517537515e-05, "f": 14614853.67, "cp": 420052.67, "pv": 237185.16, "S": 4124933768.04}, {"m": "2027-10", "du": 20, "r": 0.010707515603770786, "o": -5.172106000339898e-05, "f": 15218149.94, "cp": 405714.34, "pv": 229089.18, "S": 4183471561.2}, {"m": "2027-11", "du": 20, "r": 0.010864560745579396, "o": -5.1790558506051706e-05, "f": 15821446.22, "cp": 411471.91, "pv": 232340.23, "S": 4243884111.85}, {"m": "2027-12", "du": 23, "r": 0.012174061189029953, "o": -5.813925460377917e-05, "f": 16047616.0, "cp": 480029.51, "pv": 271050.84, "S": 4310599216.1}];
+const BASE_COOP=4861149.13, BASE_RISCO=21205244.04, BASE_PCT=0.30, BASE_S=4310599216.10, TAXA_PREVI_FIXA=0.0007;
+const MESES=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+const brl=v=>"R$ "+v.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const num=(v,d=0)=>v.toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const parse=s=>{s=String(s).replace(/[R$\s%]/g,"").replace(/\./g,"").replace(",",".");const v=parseFloat(s);return isNaN(v)?0:v};
+const DEF={};
+document.querySelectorAll("input[data-kind]").forEach(el=>{DEF[el.id]=el.value;
+  el.addEventListener("input",calc);
+  el.addEventListener("blur",()=>{const v=parse(el.value),k=el.dataset.kind;
+    el.value=k==="brl"?num(v,2):k==="int"?num(Math.round(v)):num(v,el.id==="tc"?3:2);calc();});
+});
+const rm=document.getElementById("rm");MESES.forEach((m,i)=>rm.add(new Option(m+"/27",i)));rm.value=0;rm.onchange=calc;
+const g=id=>parse(document.getElementById(id).value);
+// ticket padrão com precisão total (1.765.640,67 / 16.000)
+let tkPrecise=1765640.67/16000;
+document.getElementById("tk").addEventListener("input",()=>tkPrecise=null);
+const ticket=()=>tkPrecise!==null?tkPrecise:g("tk");
+
+const P=()=>{const p=P0();p.rec=recursoNecessario(p,g("rd"));p.fa=p.rec>0?p.rec/12:0;return p;};
+function recursoNecessario(p,alvo){
+  const f=R=>sum(custeio({...p,fa:R/12}),"coop")-alvo;
+  const f0=f(0);if(f0>=-0.01)return f0<0.01?0:-1;
+  return bisect(f,0,5e10);
+}
+function custeio(p){
+  let S=p.s0,rows=[];
+  D.forEach((d,i)=>{
+    const fdu=e=>Math.pow(1+e,d.du/252)-1;
+    const bruto=S*(d.r+fdu(p.sp));
+    const outros=S*d.o;
+    const coop=S*fdu(p.tc), previ=S*fdu(p.tp);
+    const fluxo=d.f*p.fm*Math.pow(1+p.fg,i)+p.fa+(i===p.am?p.ax:0);
+    const Sf=S+bruto+outros-coop-previ+fluxo;
+    rows.push({S0:S,coop,Sf,du:d.du,fluxo});S=Sf;
+  });return rows;
+}
+function risco(p){
+  let v=p.vb,rows=[];
+  for(let i=0;i<12;i++){
+    if(i>0)v=v*(1-p.ch)*(1+p.gv)+p.ne;
+    const tk=p.tk*(i>=p.rm?1+p.rj:1);
+    const c=v*tk;rows.push({v,tk,c,com:c*p.pc,seg:c*(1-p.pc)});
+  }return rows;
+}
+const P0=(G=g,TK=ticket(),RM=+rm.value)=>({tc:G("tc")/100,tp:TAXA_PREVI_FIXA,s0:G("s0"),sp:0,fm:1,fa:0,ax:0,am:0,fg:0,
+  vb:G("vb"),tk:TK,ne:G("ne"),gv:G("gv")/100,ch:G("ch")/100,pc:G("pc")/100,rj:G("rj")/100,rm:RM});
+const TK_DEF=1765640.67/16000;
+// parâmetros da planilha com apenas um campo alterado (efeito isolado)
+const Pso=key=>P0(id=>id===key?g(id):parse(DEF[id]),key==="tk"?ticket():TK_DEF,key==="rj"?+rm.value:0);
+const sum=(a,k)=>a.reduce((s,r)=>s+r[k],0);
+const delta=(v,b)=>{const d=v-b;return `<span class="${d>=0?'pos':'neg'}">${d>=0?'+':'−'} ${brl(Math.abs(d))} vs planilha</span>`};
+let last=null;
+function calc(){
+  const p=P(),C=custeio(p),R=risco(p);
+  const tc=sum(C,"coop"),tr=sum(R,"c"),tcm=sum(R,"com"),Sf=C[11].Sf;
+  const tot=tc+tcm, baseTot=BASE_COOP+BASE_RISCO*BASE_PCT;
+  document.getElementById("kpis").innerHTML=`
+   <div class="kpi t"><div class="l">Receita total das cooperativas 2027</div><div class="v">${brl(tot)}</div><div class="d">${delta(tot,baseTot)}</div></div>
+   <div class="kpi"><div class="l">Receita/Comissão Cooperativa 2027</div><div class="v">${brl(tc)}</div><div class="d">${delta(tc,BASE_COOP)}</div></div>
+   <div class="kpi r"><div class="l">Comissão sobre riscos 2027</div><div class="v">${brl(tcm)}</div><div class="d">${delta(tcm,BASE_RISCO*BASE_PCT)}</div></div>
+   <div class="kpi"><div class="l">Patrimônio dez/2027 · crescimento ${num((Sf/p.s0-1)*100,1)}% no ano</div><div class="v">${brl(Sf)}</div><div class="d">${delta(Sf,BASE_S)}</div></div>
+   <div class="kpi r"><div class="l">Vidas em dez/2027 · contribuição anual de risco</div><div class="v">${num(R[11].v)}</div><div class="d">${brl(tr)}</div></div>
+   <div class="kpi t"><div class="l">Participação da Receita/Comissão Cooperativa no total</div><div class="v">${num(tot>0?tc/tot*100:0,1)}%</div><div class="d">Taxa de ${num(p.tc*100,3)}% a.a. sobre o patrimônio</div></div>`;
+  const pc=tot>0?tc/tot*100:0;
+  document.getElementById("bar").innerHTML=`<div style="width:${pc}%;background:var(--tur)"></div><div style="width:${100-pc}%;background:var(--vcl)"></div>`;
+  document.getElementById("lg1").textContent=`Receita/Comissão Cooperativa: ${num(pc,1)}%`;
+  document.getElementById("lg2").textContent=`Comissão sobre riscos: ${num(100-pc,1)}%`;
+  let h=`<thead><tr><th>Mês</th><th>DU</th><th>Saldo inv. início</th><th>Fluxo + aportes</th><th>Receita/Comissão Cooperativa</th><th>Saldo inv. fim</th><th>Vidas</th><th>Ticket</th><th>Contribuição risco</th><th>Comissão coop.</th><th>Receita total coop.</th></tr></thead><tbody>`;
+  for(let i=0;i<12;i++){const c=C[i],r=R[i];
+    h+=`<tr><td>${MESES[i]}/27</td><td>${c.du}</td><td>${brl(c.S0)}</td><td>${brl(c.fluxo)}</td><td>${brl(c.coop)}</td><td>${brl(c.Sf)}</td><td>${num(r.v)}</td><td>${brl(r.tk)}</td><td>${brl(r.c)}</td><td>${brl(r.com)}</td><td><b>${brl(c.coop+r.com)}</b></td></tr>`;}
+  h+=`</tbody><tfoot><tr><td>Total 2027</td><td>${sum(C,"du")}</td><td></td><td>${brl(sum(C,"fluxo"))}</td><td>${brl(tc)}</td><td>${brl(Sf)}</td><td>${num(R[11].v)}</td><td></td><td>${brl(tr)}</td><td>${brl(tcm)}</td><td>${brl(tot)}</td></tr></tfoot>`;
+  document.getElementById("tb").innerHTML=h;
+  document.getElementById("sens").textContent=brl(1e8*p.tc);
+  const B=custeio({...p,fa:0}),cb=sum(B,"coop");
+  document.getElementById("rlOut").innerHTML=p.rec<=0?
+   `<b>Recurso líquido adicional necessário: R$ 0,00.</b><br>A premissa da planilha já gera ${brl(cb)} de Receita/Comissão Cooperativa em 2027${p.rec<0?", acima do valor desejado":""}.`:
+   `Recurso líquido adicional necessário: <b>${brl(p.rec)}</b> no ano (${brl(p.rec/12)} por mês).<br>Patrimônio em dez/2027: <b>${brl(Sf)}</b> (+ ${brl(Sf-B[11].Sf)} sobre a premissa).<br>Receita/Comissão Cooperativa 2027: <b>${brl(tc)}</b> (+ ${brl(tc-cb)}), com a mesma taxa de ${num(p.tc*100,3)}% a.a.`;
+  resumo(p,C,R,{tc,tcm,tot,baseTot,Sf});
+  last={C,R};
+}
+function bisect(f,lo,hi){for(let k=0;k<100;k++){const m=(lo+hi)/2;f(m)<0?lo=m:hi=m;}return (lo+hi)/2;}
+function goalCusteio(){
+  const alvo=g("gc"),p=P();
+  const t=bisect(x=>sum(custeio({...p,tc:x}),"coop")-alvo,0,0.05);
+  const out=document.getElementById("gcOut");
+  out.innerHTML=`Taxa necessária: <b>${num(t*100,4)}% a.a.</b> (atual ${num(p.tc*100,3)}% a.a.). <a href="#" id="apc">Aplicar</a>`;
+  document.getElementById("apc").onclick=e=>{e.preventDefault();document.getElementById("tc").value=num(t*100,4);calc();};
+}
+function goalRisco(){
+  const alvo=g("gr"),p=P();
+  const v=bisect(x=>sum(risco({...p,vb:x}),"com")-alvo,0,1e7);
+  const a=bisect(x=>sum(risco({...p,ne:x}),"com")-alvo,0,1e6);
+  const t=bisect(x=>sum(risco({...p,tk:x}),"com")-alvo,0,1e5);
+  document.getElementById("grOut").innerHTML=`Para atingir a meta, mantidas as demais premissas, há três caminhos:<br>• Base inicial de <b>${num(Math.ceil(v))} vidas</b> (atual ${num(p.vb)}). <a href="#" id="apv">Aplicar</a><br>• ou <b>${num(Math.ceil(a))} novas vidas por mês</b> a partir de fevereiro (atual ${num(p.ne)}). <a href="#" id="apn">Aplicar</a><br>• ou ticket médio de <b>${brl(t)}</b> (atual ${brl(p.tk)}).`;
+  document.getElementById("apv").onclick=e=>{e.preventDefault();document.getElementById("vb").value=num(Math.ceil(v));calc();};
+  document.getElementById("apn").onclick=e=>{e.preventDefault();document.getElementById("ne").value=num(Math.ceil(a));calc();};
+}
+function goalVidas(){
+  const alvo=g("gvd"),p=P();
+  const n=bisect(x=>risco({...p,ne:x})[11].v-alvo,-1e6,1e6);
+  const gpc=bisect(x=>risco({...p,gv:x})[11].v-alvo,-0.5,1);
+  const r=risco({...p,ne:n}),c0=sum(risco(p),"com"),c1=sum(r,"com");
+  document.getElementById("gvOut").innerHTML=`Para chegar a ${num(alvo)} vidas em dez/2027: <b>${num(Math.ceil(n))} novas vidas por mês</b> <a href="#" id="apvn">Aplicar</a> ou crescimento de <b>${num(gpc*100,2)}% ao mês</b> <a href="#" id="apvg">Aplicar</a>. No primeiro caminho, a comissão anual passa de ${brl(c0)} para <b>${brl(c1)}</b>.`;
+  document.getElementById("apvn").onclick=e=>{e.preventDefault();document.getElementById("ne").value=num(Math.ceil(n));calc();};
+  document.getElementById("apvg").onclick=e=>{e.preventDefault();document.getElementById("gv").value=num(gpc*100,2);calc();};
+}
+const LBL={tc:["taxa da Receita/Comissão Cooperativa","pct3"],s0:["saldo inicial de investimentos","brl"],rd:["Receita/Comissão Cooperativa desejada","brl"],
+  vb:["vidas na base","int"],tk:["ticket médio de risco","brl"],ne:["novas vidas por mês","int"],gv:["crescimento da carteira","pctm"],ch:["cancelamentos","pctm"],pc:["percentual de comissão sobre riscos","pct"],rj:["reajuste do ticket","pct"]};
+function fmtL(v,k){return k==="brl"?brl(v):k==="int"?num(v):k==="pct3"?num(v,3)+"% a.a.":k==="pctm"?num(v,2)+"% ao mês":num(v,2)+"%";}
+function explicar(p){
+  const D0=Pso("__none__"),coop0=sum(custeio(D0),"coop"),com0=sum(risco(D0),"com");
+  const sg=v=>(v>=0?"+ ":"− ")+brl(Math.abs(v));
+  const ch=id=>Math.abs(parse(DEF[id])-g(id))>0.004;
+  const L=[];
+  // Receita sobre patrimônio
+  if(ch("tc")){const q=Pso("tc"),c=sum(custeio(q),"coop");
+    L.push(`<b>Taxa alterada para ${num(q.tc*100,3)}% a.a.</b> Com o patrimônio previsto, a Receita/Comissão Cooperativa passa a ser ${brl(c)} (${sg(c-coop0)} vs ${num(D0.tc*100,3)}% a.a.). Cada 0,010 p.p. de taxa vale cerca de ${brl(coop0/(D0.tc*100)*0.01)} por ano.${(()=>{const alvo=g("rd"),rec=recursoNecessario(P0(),alvo);return ` Para atingir a receita desejada de ${brl(alvo)} com essa taxa, ${rec>0?`são necessários <b>${brl(rec)}</b> de recurso líquido adicional no ano`:`não é necessário recurso líquido adicional`}.`})()}`);}
+  if(ch("rd")){const alvo=g("rd"),q=P0(),rec=recursoNecessario(q,alvo),
+      tx=bisect(x=>sum(custeio({...q,tc:x}),"coop")-alvo,0,0.05);
+    L.push(rec>0?`<b>Receita desejada de ${brl(alvo)}.</b> Para atingir esse valor mantendo a taxa de ${num(q.tc*100,3)}% a.a., é necessário <b>${brl(rec)}</b> de recurso líquido adicional no ano (${brl(rec/12)} por mês). Sem recurso adicional, a taxa necessária seria de <b>${num(tx*100,4)}% a.a.</b>`
+      :`<b>Receita desejada de ${brl(alvo)}.</b> A premissa atual já atinge esse valor; não é necessário recurso líquido adicional. A taxa que entregaria exatamente esse valor seria de ${num(tx*100,4)}% a.a.`);}
+  if(ch("gc")){const alvo=g("gc"),q=P0(),tx=bisect(x=>sum(custeio({...q,tc:x}),"coop")-alvo,0,0.05);
+    L.push(`<b>Meta pela taxa de ${brl(alvo)}.</b> Para atingir esse valor sem recurso adicional, a taxa necessária será de <b>${num(tx*100,4)}% a.a.</b> (hoje ${num(q.tc*100,3)}% a.a.).`);}
+  if(ch("s0")){const q=Pso("s0"),c=sum(custeio(q),"coop");
+    L.push(`<b>Saldo inicial alterado para ${brl(q.s0)}.</b> A Receita/Comissão Cooperativa vai para ${brl(c)} (${sg(c-coop0)}).`);}
+  // Riscos
+  const rk=(id,txt)=>{if(!ch(id))return;const q=Pso(id),r=risco(q),c=sum(r,"com");L.push(`<b>${txt(q,r)}.</b> A comissão anual sobre riscos passa a ser ${brl(c)} (${sg(c-com0)}), com ${num(r[11].v)} vidas em dez/2027.`);};
+  rk("vb",q=>`Base alterada para ${num(q.vb)} vidas`);
+  if(ch("tk")){const q=Pso("tk"),c=sum(risco(q),"com");
+    L.push(`<b>Ticket médio alterado para ${brl(q.tk)}.</b> A comissão anual sobre riscos passa a ser ${brl(c)} (${sg(c-com0)}). Cada R$ 1,00 no ticket vale cerca de ${brl(com0/TK_DEF)} de comissão por ano.`);}
+  rk("ne",q=>`${num(q.ne)} novas vidas por mês`);
+  rk("gv",q=>`Crescimento da carteira de ${num(q.gv*100,2)}% ao mês`);
+  rk("ch",q=>`Cancelamentos de ${num(q.ch*100,2)}% ao mês`);
+  rk("pc",q=>`Comissão alterada para ${num(q.pc*100,2)}%`);
+  rk("rj",q=>`Reajuste de ${num(q.rj*100,2)}% no ticket a partir de ${MESES[q.rm]}/27`);
+  if(ch("gr")){const alvo=g("gr"),q=P0();
+    const v=bisect(x=>sum(risco({...q,vb:x}),"com")-alvo,0,1e7),a=bisect(x=>sum(risco({...q,ne:x}),"com")-alvo,-1e6,1e6),tk=bisect(x=>sum(risco({...q,tk:x}),"com")-alvo,0,1e5),pc=bisect(x=>sum(risco({...q,pc:x}),"com")-alvo,0,5);
+    L.push(`<b>Meta de comissão sobre riscos de ${brl(alvo)}.</b> Mantidas as demais premissas da simulação, para atingir esse valor será necessária uma destas alternativas: base de <b>${num(Math.ceil(v))} vidas</b>, ou <b>${num(Math.ceil(a))} novas vidas por mês</b>, ou ticket médio de <b>${brl(tk)}</b>, ou comissão de <b>${num(pc*100,2)}%</b>.`);}
+  if(ch("gvd")){const alvo=g("gvd"),q=P0(),n=bisect(x=>risco({...q,ne:x})[11].v-alvo,-1e6,1e6),gp=bisect(x=>risco({...q,ne:0,gv:x})[11].v-alvo,-0.5,1);
+    L.push(`<b>Meta de ${num(alvo)} vidas em dez/2027.</b> Para atingir esse número serão necessárias <b>${num(Math.ceil(n))} novas vidas por mês</b> ou, sem entradas fixas, crescimento da carteira de <b>${num(gp*100,2)}% ao mês</b>.`);}
+  return L.map(s=>`<li>${s}</li>`).join("");
+}
+let h0="";
+function resumo(p,C,R,x){
+  const mud=[];
+  Object.entries(LBL).forEach(([id,[l,k]])=>{const a=parse(DEF[id]),b=g(id);if(Math.abs(a-b)>0.004)mud.push(`${l} de ${fmtL(a,k)} para <b>${fmtL(b,k)}</b>`);});
+  if(+rm.value!==0&&g("rj")!==0)mud.push(`reajuste aplicado em ${MESES[+rm.value]}/27`);
+  const dt=x.tot-x.baseTot, sh=x.tot>0?x.tcm/x.tot*100:0;
+  const BASE_COM=BASE_RISCO*BASE_PCT;
+  const dc=x.tc-BASE_COOP, dr=x.tcm-BASE_COM;
+  h0=explicar(p);
+  let h=`<p><b>Premissas.</b> ${mud.length?"Em relação à planilha, a simulação altera: "+mud.join("; ")+".":"Simulação nas premissas da planilha (taxa de 0,124% a.a., 16.000 vidas, ticket médio de R$ 110,35 e comissão de 30%)."}</p>`;
+  if(h0)h+=`<p><b>O que cada alteração provoca.</b></p><ul style="margin:0 0 10px;padding-left:20px">${h0}</ul>`;
+  h+=`<p><b>Resultado.</b> A receita total das cooperativas em 2027 fica em <b>${brl(x.tot)}</b>, ${Math.abs(dt)<0.5?"em linha com a planilha":(dt>0?"acima":"abaixo")+" da planilha em "+brl(Math.abs(dt))+" ("+(dt>0?"+":"−")+num(Math.abs(dt)/x.baseTot*100,Math.abs(dt)/x.baseTot<0.001?2:1)+"%)"}. A comissão sobre riscos responde por ${num(sh,1)}% do total (${brl(x.tcm)}) e a Receita/Comissão Cooperativa sobre o patrimônio por ${num(100-sh,1)}% (${brl(x.tc)}).</p>`;
+  h+=`<p><b>Patrimônio.</b> ${p.rec>0?`Para atingir a receita desejada de ${brl(g("rd"))} sem mudar a taxa, são necessários <b>${brl(p.rec)}</b> de recurso líquido adicional no ano (${brl(p.rec/12)} por mês), levando o patrimônio a ${brl(x.Sf)} em dez/2027. Cada R$ 1,00 de receita adicional exige cerca de ${brl(p.rec/Math.max(dc,0.01))} de recurso novo.`:`Sem recurso líquido adicional, o patrimônio chega a ${brl(x.Sf)} em dez/2027, crescimento de ${num((x.Sf/p.s0-1)*100,1)}% no ano.`}</p>`;
+  h+=`<p><b>Riscos.</b> A carteira sai de ${num(R[0].v)} para <b>${num(R[11].v)} vidas</b> em dez/2027, com contribuição anual de ${brl(sum(R,"c"))} e comissão de ${brl(x.tcm)} (${dr>=0?"+":"−"} ${brl(Math.abs(dr))} vs planilha).</p>`;
+  let concl;
+  if(!mud.length)concl="Não há variação relevante em relação ao orçamento. A pequena diferença na comissão sobre riscos vem da premissa da planilha de crescimento de R$ 266,00 por mês na linha 7 (ticket médio de R$ 1,00 em AA7).";
+  else if(Math.abs(dc)<0.5&&Math.abs(dr)<10)concl="Não há variação relevante em relação ao orçamento.";
+  else if(Math.abs(dr)>=Math.abs(dc))concl=`O principal motor da variação é a carteira de risco (${brl(Math.abs(dr))}), que tem efeito direto na receita das cooperativas, ao contrário do crescimento do patrimônio.`;
+  else concl=`O principal motor da variação é a receita sobre o patrimônio (${brl(Math.abs(dc))}). Vale confrontar o recurso líquido exigido com a capacidade real de captação do plano.`;
+  h+=`<p><b>Leitura.</b> ${concl}</p>`;
+  document.getElementById("resumo").innerHTML=h;
+}
+function copyResumo(){
+  const txt=[...document.querySelectorAll("#resumo p, #resumo li")].map(e=>(e.tagName==="LI"?"• ":"")+e.textContent).join("\n\n");
+  navigator.clipboard.writeText(txt).then(()=>document.getElementById("cpr").textContent="Resumo copiado.",()=>document.getElementById("cpr").textContent="Não foi possível copiar neste navegador.");
+}
+function resetAll(){Object.entries(DEF).forEach(([k,v])=>document.getElementById(k).value=v);rm.value=0;tkPrecise=1765640.67/16000;
+  document.getElementById("gcOut").innerHTML="";document.getElementById("grOut").innerHTML="";document.getElementById("gvOut").innerHTML="";calc();}
+function copyTable(){
+  const t=[...document.querySelectorAll("#tb tr")].map(r=>[...r.children].map(c=>c.textContent).join("\t")).join("\n");
+  navigator.clipboard.writeText(t).then(()=>document.getElementById("cp").textContent="Copiada — cole no Excel.",()=>document.getElementById("cp").textContent="Não foi possível copiar neste navegador.");
+}
+function toggleTheme(){const d=document.documentElement,n=d.dataset.theme==="dark"?"light":"dark";d.dataset.theme=n;
+  document.getElementById("theme").textContent=n==="dark"?"◑ Modo claro":"◐ Modo escuro";try{localStorage.setItem("simcoop-theme",n)}catch(e){}}
+try{if(localStorage.getItem("simcoop-theme")==="dark")toggleTheme()}catch(e){}
+calc();
+</script>
+</body>
+</html>
